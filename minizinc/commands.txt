@@ -1,0 +1,1 @@
+minizinc --solver gurobi --gurobi-dll "/home/kieran/anaconda3/pkgs/gurobi-9.0.0-py37_0/lib/libgurobi90.so" -v -s -a train.mzn instance.1.dzn

@@ -1,0 +1,146 @@
+{
+    "operator": {
+        "NT": {
+            "142-2": {
+                "name": "142 Pacer",
+                "type": "DMU",
+                "number": "24",
+                "size": 2,
+                "top_speed": 75
+            },
+            "144-2": {
+                "name": "144 Pacer",
+                "type": "DMU",
+                "number": "13",
+                "size": 2,
+                "top_speed": 75
+            },
+            "144-3": {
+                "name": "144 Pacer",
+                "type": "DMU",
+                "number": "10",
+                "size": 3,
+                "top_speed": 75
+            },
+            "150": {
+                "name": "150 Sprinter",
+                "type": "DMU",
+                "number": "78",
+                "size": 2,
+                "top_speed": 75
+            },
+            "153": {
+                "name": "153 Super Sprinter",
+                "type": "DMU",
+                "number": "20",
+                "size": 1,
+                "top_speed": 75
+            },
+            "155": {
+                "name": "155 Super Sprinter",
+                "type": "DMU",
+                "number": "7",
+                "size": 2,
+                "top_speed": 75
+            },
+            "156": {
+                "name": "156 Super Sprinter",
+                "type": "DMU",
+                "number": "47",
+                "size": 2,
+                "top_speed": 75
+            },
+            "158-2": {
+                "name": "158 Express Sprinter",
+                "type": "DMU",
+                "number": "45",
+                "size": 2,
+                "top_speed": 90
+            },
+            "158-3": {
+                "name": "158 Express Sprinter",
+                "type": "DMU",
+                "number": "8",
+                "size": 3,
+                "top_speed": 90
+            },
+            "170": {
+                "name": "170 Turobostar",
+                "type": "DMU",
+                "number": "16",
+                "size": 3,
+                "top_speed": 100
+            },
+            "180": {
+                "name": "180 Adelante",
+                "type": "DMU",
+                "number": "1",
+                "size": 5,
+                "top_speed": 125
+            },
+            "195-2": {
+                "name": "195 Civity",
+                "type": "DMU",
+                "number": "12",
+                "size": 2,
+                "top_speed": 100
+            },
+            "195-3": {
+                "name": "195 Civity",
+                "type": "DMU",
+                "number": "23",
+                "size": 3,
+                "top_speed": 100
+            },
+            "319": {
+                "name": "319",
+                "type": "EMU",
+                "number": "15",
+                "size": 4,
+                "top_speed": 100
+            },
+            "321": {
+                "name": "321",
+                "type": "EMU",
+                "number": "3",
+                "size": 4,
+                "top_speed": 100
+            },
+            "322": {
+                "name": "322",
+                "type": "EMU",
+                "number": "5",
+                "size": 4,
+                "top_speed": 100
+            },
+            "323": {
+                "name": "323",
+                "type": "EMU",
+                "number": "17",
+                "size": 3,
+                "top_speed": 90
+            },
+            "331-3": {
+                "name": "331 Civity",
+                "type": "EMU",
+                "number": "15",
+                "size": 3,
+                "top_speed": 100
+            },
+            "331-4": {
+                "name": "331 Civity",
+                "type": "EMU",
+                "number": "12",
+                "size": 4,
+                "top_speed": 100
+            },
+            "333": {
+                "name": "333",
+                "type": "EMU",
+                "number": "16",
+                "size": 4,
+                "top_speed": 100
+            }
+        }
+    }
+}

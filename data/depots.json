@@ -1,0 +1,62 @@
+{
+    "operator": {
+        "NT": {
+            "allerton": {
+                "name":"Allerton TMD",
+                "location": {
+                    "nearest":"LVRPSPY",
+                    "geoloc":""
+                },
+                "types":"195,319,323,331"
+            },
+            "blackburn": {
+                "name":"Blacburn King Street TMD",
+                "location": {
+                    "nearest":"BLKB",
+                    "geoloc":""
+                },
+                "types":"142,150,156"
+            },
+            "botanic": {
+                "name":"Botanic Gardens TMD",
+                "location": {
+                    "nearest":"",
+                    "geoloc":""
+                },
+                "types":"08"
+            },
+            "heaton": {
+                "name":"Heaton TMD",
+                "location": {
+                    "nearest":"NWCSTLE",
+                    "geoloc":""
+                },
+                "types":"142,156,158"
+            },
+            "newton": {
+                "name":"Newton Heath TMD",
+                "location": {
+                    "nearest":"MNCRVIC",
+                    "geoloc":""
+                },
+                "types":"142,150,153,156,195"
+            },
+            "neville": {
+                "name":"Neville Hill TMD",
+                "location": {
+                    "nearest":"LEEDS",
+                    "geoloc":""
+                },
+                "types":"144,153,155,170,321,322,331,333"
+            },
+            "wigan": {
+                "name":"Wigan Springs Branch TMD",
+                "location": {
+                    "nearest":"WIGANNW",
+                    "geoloc":""
+                },
+                "types":"158,195,319,331"
+            }
+        }
+    }
+}
