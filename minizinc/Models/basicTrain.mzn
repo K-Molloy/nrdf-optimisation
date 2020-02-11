@@ -1,8 +1,8 @@
 
-% Train Delay Rescheduling w/ Passenger Weighting
+% Train Delay Rescheduling
 
 % Original Author : MiniZinc Benchmarks 
-%        Modified : Kieran Molloy 02/12/2019
+%        Modified : Kieran Molloy 21/12/2019
 
 %----------------------------------------------------------------------------%
 % Suggested Data Files
@@ -17,6 +17,19 @@
 % Basic_n10m10.dzn
 % Liverpool_Manchester_North.dzn
 % Liverpool_Manchester_North_nodelay.dzn
+
+%----------------------------------------------------------------------------%
+
+% We have n trains moving along a single track with m stations. There is a
+% non-zero constant flow of passengers arriving at all but the first and last
+% station who wish to travel to the final station.   Trains are originally
+% scheduled so that they collect the passengers and drop them at the final
+% station.  To this original schedule a disruption is introduced whereby a train
+% is delayed. Each of the trains (at the time of the delay) has knowledge of the
+% duration of the delay. The objective is to reschedule the trains to minimize
+% the average travel time of the passengers. Trains are not able to overtake
+% preceding trains, however they do have the option to
+% skip a station and wait longer at a station to collect more passengers.
 
 %----------------------------------------------------------------------------%
 % Variables
@@ -60,25 +73,16 @@ array [1..n, 1..m] of var 0..maxTime : arrival;
 % Final Destination Time of Train n at station M
 array [1..n] of var 0..maxTime : finalArrival = [ arrival[i,m] | i in 1..n ];
 
-array [1..n, 1..m] of var 0..maxTime : sigmaLower;
-array [1..n, 1..m] of var 0..maxTime : sigmaUpper;
-
 % Dwell Time of Train n at Station m
 array [1..n, 1..m] of var 0..maxTime : dwell;
 
 
-
-% Number of Passengers collected at station m 
-array [1..n, 1..m] of var 0..capacity : collect;
-% Total Passengers on board
-array [1..n, 1..m] of var 0..capacity : load;
-
 %----------------------------------------------------------------------------%
 % Objective Function
 
-int: objective_min = lb(sum(i in 1..n)(load[i,m]*arrival[i,m]));
-int: objective_max = ub(sum(i in 1..n)(load[i,m]*arrival[i,m]));
-var objective_min..objective_max: objective = sum(i in 1..n)(load[i,m]*arrival[i,m]);
+int: objective_min = lb(sum(i in 1..n)(arrival[i,m]-scheduledArrival[i,m]));
+int: objective_max = ub(sum(i in 1..n)(arrival[i,m]-scheduledArrival[i,m]));
+var objective_min..objective_max: objective = sum(i in 1..n)(arrival[i,m]-scheduledArrival[i,m]);
 
 %----------------------------------------------------------------------------%
 % Constraints
@@ -133,80 +137,27 @@ constraint forall (i in 1..n-1)
 constraint forall (i in 1..n-1, j in 2..m-1)
         (departure[i,j] <= arrival[i+1,j]-2);
 
-% The sigma values partition time at each station.
-constraint forall (i in 1..n, j in 1..m)
-        (sigmaLower[i,j] <= sigmaUpper[i,j]);
-
-% For the first and last trains, the sigma values are equal to the
-% extreme times of passenger arrivals.
-constraint forall (j in 2..m-1)
-        ((sigmaLower[1,j] = passengerStart[j])
-     /\ (sigmaUpper[n,j] = scheduledDeparture[n,j]));
-% The sigma values join together.
-constraint forall (i in 1..n-1, j in 1..m)
-        (sigmaUpper[i,j] = sigmaLower[i+1,j]);
-
-% You can't pick up people after you leave.
-constraint forall (i in 1..n-1, j in 1..m-1)
-         (sigmaUpper[i,j] <= departure[i,j]);
-constraint forall (j in 1..m-1)
-        (sigmaUpper[n,j] <= departure[n,j]);
-
-% Defines collect and load variables.
-constraint forall (i in 1..n, j in 1..m)
-        (collect[i,j] = (sigmaUpper[i,j]-sigmaLower[i,j])*passengerFlow[j]);
-
-constraint forall (i in 1..n) 
-        (load[i,1] = collect[i,1]);
-constraint forall (i in 1..n, j in 2..m)
-        (load[i,j] = load[i,j-1] + collect[i,j]);
-
-% If a train picks anyone up, then it must pick
-% everyone up (until it gets full).
-constraint forall (i in 1..n, j in 1..m-1)
-        (sigmaUpper[i,j] > sigmaLower[i,j] ->
-             ((sigmaUpper[i,j] = departure[i,j]) \/
-              (sigmaUpper[i,j] = scheduledDeparture[n,j]) \/
-              (load[i,j] + bool2int(sigmaUpper[i,j] < scheduledDeparture[n,j])*passengerFlow[j] > capacity)));
-
-% Boarding time.
-constraint forall (i in 1..n, j in 2..m)
-        (((capacity-load[i,j-1] < 100) -> (collect[i,j] <= dwell[i,j]*20)) /\
-         ((capacity-load[i,j-1] >= 100) -> (collect[i,j] <= dwell[i,j]*50)));
-% (Redundant for j>=2 (but necessary for j=1))
-constraint forall (i in 1..n, j in 1..m)
-        (collect[i,j] <= (departure[i,j]-arrival[i,j])*50);
-
-
-constraint forall (i in 1..n, j in 1..m)
+% Dwell Time
+constraint forall (i in 1..n, j in 1..m) 
         (dwell[i,j] = departure[i,j] - arrival[i,j]);
 
 
-
+%----------------------------------------------------------------------------%
+% Solve
 solve 
     :: seq_search([
         int_search(
             [arrival[i,m-j+1] | j in 1..m, i in 1..n] ++
-            [departure[i,m-j+1] | j in 1..m, i in 1..n] ++
-            [sigmaUpper[i,m-j+1] | j in 1..m, i in 1..n] ++
-            [sigmaLower[i,m-j+1] | j in 1..m, i in 1..n],
+            [departure[i,m-j+1] | j in 1..m, i in 1..n],
             input_order, indomain_min, complete
         ),
-        int_search(
-            array1d(1..n*m, collect) ++ array1d(1..n*m, load) ++ array1d(1..n*m, dwell),
-            first_fail, indomain_min, complete
-        )
     ])
     minimize objective;
-
+%----------------------------------------------------------------------------%
+% Output
 output [
     "arrival = array2d(1..", show(n), ", 1..", show(m), ", ", show(arrival), ");\n",
     "departure = array2d(1..", show(n), ", 1..", show(m), ", ", show(departure), ");\n",
-    "sigmaLower = array2d(1..", show(n), ", 1..", show(m), ", ", show(sigmaLower), ");\n",
-    "sigmaUpper = array2d(1..", show(n), ", 1..", show(m), ", ", show(sigmaUpper), ");\n",
-    "collect = array2d(1..", show(n), ", 1..", show(m), ", ", show(collect), ");\n",
-    "load = array2d(1..", show(n), ", 1..", show(m), ", ", show(load), ");\n",
     "dwell = array2d(1..", show(n), ", 1..", show(m), ", ", show(dwell), ");\n",
     "constraint objective = ", show(objective), ";\n"
 ];
-
